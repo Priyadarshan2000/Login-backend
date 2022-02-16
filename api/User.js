@@ -172,8 +172,4 @@ router.get('/', (req,res) => {
     res.status(200).json({message: "Fixed"})
 })
 
-router.get('/', (req,res) => {
-    res.status(200).json({message: "Fixed"})
-})
-
 module.exports = router;
