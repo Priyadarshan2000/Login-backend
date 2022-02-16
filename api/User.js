@@ -14,6 +14,8 @@ router.post('/signup', (req, res) => {
     password=password.trim();
     dateOfBirth=dateOfBirth.trim();
 
+    // console.log(dateOfBirth)
+
 
     if (name==""|| email=="" || password=="" || dateOfBirth=="") {
         res.json({
@@ -99,7 +101,75 @@ router.post('/signup', (req, res) => {
 })
 
 router.post('/signin', (req, res) => {
+    
+    let{email, password} = req.body;
+  
+    email=email.trim();
+    password=password.trim();
 
+    if (email =="" || password =="")
+    {
+        res.json({
+            status:"Failed",
+            message:"empty credentials suppiled!"
+        })
+    }else
+    {
+        // if user  exists
+        User.find({email})
+        .then(data => {
+            if (data.length)
+            {
+                //user exists
+                const hashedPassword = data[0].password;
+                bcrypt.compare(password, hashedPassword).then(result => {
+                    if (result)
+                    {
+                        //password matches
+                        res.json({
+                            status:"SUCCESS",
+                            message:"Signin success",
+                            data:data
+                        })
+                    }
+                    else
+                    {
+                        //password does not match
+                        res.json({
+                            status:"Failed",
+                            message:"Invalid Password!"
+                        })
+                    }
+                })
+            .catch (err => {
+                res.json({
+                    status:"Failed",
+                    message:"An error occured while comparing password!"
+                })
+            })
+            }
+            else
+            {
+                //user does not exist
+                res.json({
+                    status:"Failed",
+                    message:"invalid credentials entered!"
+                })
+            }
+
+        })
+        .catch(err => {
+            res.json({
+                status:"Failed",
+                message:"An error occured while checking for existing user!"
+            })
+        })
+
+    }
+})
+
+router.get('/', (req,res) => {
+    res.status(200).json({message: "Fixed"})
 })
 
 module.exports = router;
